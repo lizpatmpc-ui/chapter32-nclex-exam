@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 32 Master NCLEX Exam — 180 Questions</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#dbe1ea;--accent:#243b53;--good:#166534;--goodbg:#f0fdf4;--bad:#991b1b;--badbg:#fef2f2}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.shell{max-width:880px;margin:0 auto;padding:24px 16px 70px}.hero,.card,.toolbar{background:var(--card);border:1px solid var(--border);border-radius:16px}
+.hero{padding:22px;margin-bottom:14px}h1{margin:0 0 8px;font-size:28px}.muted{color:var(--muted)}
+.toolbar{padding:12px;position:sticky;top:8px;z-index:10;margin-bottom:14px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{border:0;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}
+.secondary,.section-btn{background:#fff;color:var(--accent);border:1px solid var(--border)}.score{margin-left:auto;font-weight:800}
+.progress-wrap{height:8px;background:#e5e7eb;border-radius:999px;margin-top:10px;overflow:hidden}.progress{height:100%;background:var(--accent);width:0}
+.card{padding:22px;min-height:390px}.kicker{font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:800;color:var(--muted)}
+h2{font-size:20px;line-height:1.45;margin:10px 0 18px}.options{display:grid;gap:10px}
+.option{display:flex;gap:10px;border:1px solid var(--border);border-radius:11px;padding:12px;cursor:pointer;background:white}.option:hover{background:#f8fafc}
+.option.correct-choice{border-color:#86efac;background:var(--goodbg)}.option.wrong-choice{border-color:#fca5a5;background:var(--badbg)}
+input{margin-top:3px}.feedback{margin-top:16px;padding:13px 14px;border-radius:10px;display:none;line-height:1.45}
+.feedback.good{display:block;background:var(--goodbg);color:var(--good);border:1px solid #bbf7d0}.feedback.bad{display:block;background:var(--badbg);color:var(--bad);border:1px solid #fecaca}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}.summary{display:none;margin-top:16px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px}
+.summary.show{display:block}.section-results{display:grid;gap:8px;margin-top:10px}
+@media(max-width:600px){.score{margin-left:0;width:100%}.card{padding:17px}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hero">
+    <h1>Chapter 32 Master Exam</h1>
+    <div class="muted">180 questions • one question at a time • instant feedback • section + overall scoring</div>
+  </div>
+  <div class="toolbar">
+    <div class="row">
+      <button class="section-btn" onclick="jumpTo(0)">Anatomy &amp; Physiology (40)</button>
+      <button class="section-btn" onclick="jumpTo(40)">Data Collection, Labs &amp; Diagnostics (40)</button>
+      <button class="section-btn" onclick="jumpTo(80)">Therapeutic Measures (50)</button>
+      <button class="section-btn" onclick="jumpTo(130)">Tables: Definitions, Uses &amp; Abnormal Findings (50)</button>
+      <button class="secondary" onclick="resetExam()">Reset</button>
+      <button class="primary" onclick="finishExam()">Final Score</button>
+      <div class="score" id="scoreTop">Answered 0 / 180</div>
+    </div>
+    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  </div>
+  <main id="quizCard" class="card"></main>
+  <div class="nav">
+    <button class="secondary" onclick="prevQ()">← Previous</button>
+    <button class="primary" onclick="nextQ()">Next →</button>
+  </div>
+  <section class="summary" id="summary">
+    <h2 style="margin-top:0">Exam Results</h2>
+    <div id="overallResult"></div>
+    <div class="section-results" id="sectionResults"></div>
+  </section>
+</div>
+<script>window.EXAM_QUESTIONS=[];</script>
+<script src="section1.js"></script>
+<script src="section2.js"></script>
+<script src="section3.js"></script>
+<script src="section4.js"></script>
+<script>
+const questions=window.EXAM_QUESTIONS,letters=["A","B","C","D"];let current=0,responses=Array(questions.length).fill(null),locked=Array(questions.length).fill(false);
+function e(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c])}
+function render(){const q=questions[current],card=document.getElementById("quizCard"),selected=responses[current];let opts="";
+q.opts.forEach((o,i)=>{let cls="option";if(locked[current]){if(i===q.ans)cls+=" correct-choice";else if(i===selected&&i!==q.ans)cls+=" wrong-choice"}
+opts+=`<label class="${cls}"><input type="radio" name="answer" value="${i}" ${selected===i?"checked":""} ${locked[current]?"disabled":""} onchange="answerQ(${i})"><span><strong>${letters[i]}.</strong> ${e(o)}</span></label>`});
+let fb="";if(locked[current]){const ok=selected===q.ans;fb=`<div class="feedback ${ok?"good":"bad"}"><strong>${ok?"Correct":"Incorrect"}.</strong> ${!ok?`Correct answer: <strong>${letters[q.ans]}</strong>. `:""}${e(q.rat)}</div>`}
+card.innerHTML=`<div class="kicker">${e(q.section)} • Question ${current+1} of ${questions.length}</div><h2>${e(q.q)}</h2><div class="options">${opts}</div>${fb}`;updateTop();window.scrollTo({top:0,behavior:"smooth"})}
+function answerQ(i){if(locked[current])return;responses[current]=i;locked[current]=true;render()}
+function nextQ(){if(current<questions.length-1){current++;render()}}function prevQ(){if(current>0){current--;render()}}function jumpTo(i){current=i;render()}
+function updateTop(){const answered=responses.filter(x=>x!==null).length;document.getElementById("scoreTop").textContent=`Answered ${answered} / ${questions.length}`;document.getElementById("progress").style.width=`${answered/questions.length*100}%`}
+function finishExam(){let totalCorrect=0,stats={};questions.forEach((q,i)=>{if(!stats[q.section])stats[q.section]={correct:0,total:0,answered:0};stats[q.section].total++;if(responses[i]!==null)stats[q.section].answered++;if(responses[i]===q.ans){totalCorrect++;stats[q.section].correct++}});
+document.getElementById("overallResult").innerHTML=`<strong>Overall:</strong> ${totalCorrect}/${questions.length} = <strong>${(totalCorrect/questions.length*100).toFixed(1)}%</strong>`;let sh="";
+for(const [name,s] of Object.entries(stats)){sh+=`<div><strong>${e(name)}:</strong> ${s.correct}/${s.total} (${(s.correct/s.total*100).toFixed(1)}%) • answered ${s.answered}/${s.total}</div>`}
+document.getElementById("sectionResults").innerHTML=sh;document.getElementById("summary").classList.add("show");document.getElementById("summary").scrollIntoView({behavior:"smooth"})}
+function resetExam(){if(!confirm("Reset all answers and scores?"))return;responses=Array(questions.length).fill(null);locked=Array(questions.length).fill(false);current=0;document.getElementById("summary").classList.remove("show");render()}
+render();
+</script>
+</body>
+</html>
