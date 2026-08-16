@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Med-Surg Final Exam — 75 Questions</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#657089;--accent:#3156d3;--good:#16803a;--bad:#b42318;--warn:#9a6700;--border:#d9deea;--soft:#eef2ff;}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);line-height:1.45}
+.shell{max-width:930px;margin:0 auto;padding:24px 16px 60px} .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 8px 28px rgba(20,35,70,.06)}
+h1{font-size:clamp(25px,4vw,38px);line-height:1.08;margin:0 0 8px} h2{font-size:22px;margin:0 0 14px} h3{font-size:16px;margin:20px 0 8px} p{margin:8px 0} .muted{color:var(--muted)}
+.topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap} .pill{font-size:12px;font-weight:700;background:var(--soft);color:#2945a5;padding:6px 10px;border-radius:999px}
+.progress{height:10px;background:#e7eaf2;border-radius:999px;overflow:hidden;margin:12px 0 20px} .progress>div{height:100%;background:var(--accent);width:0;transition:width .25s ease}
+.stem{font-size:19px;font-weight:750;margin:10px 0 18px} .option{display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border:1px solid var(--border);border-radius:12px;margin:9px 0;cursor:pointer;background:white} .option:hover{border-color:#9aacef;background:#fafbff} .option input{margin-top:4px;transform:scale(1.1)}
+button{border:0;border-radius:11px;padding:11px 16px;font-weight:750;cursor:pointer;font-size:14px} .primary{background:var(--accent);color:white} .secondary{background:#edf0f6;color:#27324a} .danger{background:#fef0ef;color:var(--bad)} button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px} .feedback{margin-top:20px;border-top:1px solid var(--border);padding-top:18px} .scoreline{font-size:17px;font-weight:800} .good{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+.rat{border-left:4px solid #cdd5f6;background:#f8f9ff;padding:10px 12px;margin:8px 0;border-radius:8px} .rat.correct{border-left-color:#69b984;background:#f2fbf5} .rat.incorrect{border-left-color:#e0a3a0;background:#fff7f6} .letter{font-weight:800}
+.callout{padding:12px 14px;border-radius:10px;margin:10px 0;background:#f7f8fa;border:1px solid var(--border)} .teach{border-left:4px solid #4d7cfe} .dont{border-left:4px solid #d14b43} .further{border-left:4px solid #d49b20} .source{font-size:12px;color:var(--muted);margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0} .stat{border:1px solid var(--border);border-radius:12px;padding:14px} .stat strong{display:block;font-size:24px}
+.small{font-size:13px} .hidden{display:none!important} .reviewItem{border:1px solid var(--border);border-radius:12px;padding:14px;margin:10px 0} ul{padding-left:20px} .checknote{font-size:13px;color:var(--muted);margin-top:-8px;margin-bottom:12px}
+@media print{body{background:white} .no-print{display:none!important} .card{box-shadow:none;border:0} .shell{max-width:none}}
+</style>
+</head>
+<body><div class="shell">
+<section id="start" class="card">
+  <div class="pill">75 QUESTIONS • HARD MODE</div>
+  <h1>Med-Surg Final Exam</h1>
+  <p class="muted">Patient-centered NCLEX / HESI / ATI / Kaplan-style practice based on your uploaded Chapters 27, 28, and 32.</p>
+  <div class="grid">
+    <div class="stat"><strong>75</strong><span>total questions</span></div>
+    <div class="stat"><strong>Instant</strong><span>feedback after each answer</span></div>
+    <div class="stat"><strong>Partial</strong><span>credit on select-all items</span></div>
+    <div class="stat"><strong>Retake</strong><span>missed questions only</span></div>
+  </div>
+  <p><b>How scoring works:</b> Single-answer items earn 1 point when correct. Select-all-that-apply items use partial credit: correct selections earn credit and incorrect selections subtract credit, with a floor of 0.</p>
+  <p><b>Feedback includes:</b> why every option is right/wrong, key nursing teaching, nursing “don’ts,” and a statement that would indicate the patient needs further teaching.</p>
+  <div class="actions no-print"><button class="primary" onclick="startExam(false)">Start Exam</button><button class="secondary" onclick="startExam(true)">Start & Shuffle</button></div>
+</section>
+
+<section id="exam" class="card hidden">
+ <div class="topbar"><div><span id="qnum" class="pill"></span> <span id="cat" class="pill"></span></div><div id="running" class="small muted"></div></div>
+ <div class="progress"><div id="bar"></div></div>
+ <div id="typeNote" class="checknote"></div>
+ <div id="stem" class="stem"></div>
+ <div id="options"></div>
+ <div class="actions no-print"><button id="submitBtn" class="primary" onclick="submitAnswer()">Submit Answer</button><button id="nextBtn" class="secondary hidden" onclick="nextQuestion()">Next Question</button></div>
+ <div id="feedback" class="feedback hidden"></div>
+</section>
+
+<section id="results" class="card hidden">
+ <div class="pill">EXAM COMPLETE</div><h1>Your Results</h1>
+ <div id="summary"></div><div id="categoryStats"></div>
+ <div class="actions no-print"><button class="primary" id="retakeBtn" onclick="retakeMissed()">Retake Missed</button><button class="secondary" onclick="reviewMissed()">Review Missed</button><button class="secondary" onclick="window.print()">Print Results</button><button class="danger" onclick="resetExam()">Start Over</button></div>
+ <div id="review" class="hidden"></div>
+</section>
+</div>
+<script>
+const master=[{"category": "Hematology Foundations", "type": "single", "stem": "A patient with fatigue and exertional dyspnea has a low hemoglobin level. Which physiologic problem best explains the symptoms?", "options": ["Reduced oxygen-carrying capacity of the blood", "Reduced platelet adhesion at sites of vessel injury", "Excess lymph returning to the venous circulation", "Increased plasma albumin pulling fluid into capillaries"], "correct": [0], "explanations": ["Correct. Hemoglobin in RBCs carries oxygen; a reduced hemoglobin level decreases tissue oxygen delivery and can cause fatigue and dyspnea.", "Incorrect. Platelet dysfunction primarily increases bleeding risk rather than causing the classic hypoxia symptoms of anemia.", "Incorrect. Lymphatic return maintains blood volume but does not explain low hemoglobin-related oxygen delivery.", "Incorrect. Albumin supports oncotic pressure; it does not compensate for inadequate hemoglobin."], "teaching": "Balance activity with rest, teach the patient to rise slowly if dizzy, and reinforce the prescribed plan for the cause of anemia.", "dont": "Do not push activity when tachycardia, marked dyspnea, dizziness, or a significant rise in pulse/respirations occurs.", "further": "“I should keep exercising through dizziness so my body gets used to the low blood count.”", "source": "Chapter 27: RBC function, hemoglobin, anemia manifestations"}, {"category": "Hematology Foundations", "type": "single", "stem": "A patient with chronic hypoxia has an elevated reticulocyte count. Which interpretation by the nurse is most accurate?", "options": ["The marrow is releasing increased numbers of immature RBCs in response to oxygen demand", "The patient has a platelet production disorder", "The liver has stopped producing plasma proteins", "The patient is experiencing a primary lymphatic obstruction"], "correct": [0], "explanations": ["Correct. Hypoxia stimulates renal erythropoietin, increasing RBC production; more reticulocytes may appear in circulation.", "Incorrect. Reticulocytes are immature red blood cells, not platelets.", "Incorrect. Plasma protein synthesis is a liver function and is not measured by reticulocyte count.", "Incorrect. Lymphatic obstruction causes edema, not reticulocytosis."], "teaching": "Explain that reticulocytes reflect bone marrow response and are interpreted with hemoglobin, hematocrit, and the clinical picture.", "dont": "Do not interpret a reticulocyte percentage in isolation without considering the RBC count and cause of anemia/hypoxia.", "further": "“A high reticulocyte count means my platelets are recovering.”", "source": "Chapter 27: erythropoietin and reticulocyte response"}, {"category": "Blood Types & Transfusion", "type": "single", "stem": "A patient with blood type A is being prepared for transfusion. Which statement correctly describes the patient’s ABO antigens and naturally occurring plasma antibodies?", "options": ["A antigen on RBCs and anti-B antibodies in plasma", "B antigen on RBCs and anti-A antibodies in plasma", "A and B antigens on RBCs with no anti-A or anti-B antibodies", "No A or B antigens on RBCs with both anti-A and anti-B antibodies"], "correct": [0], "explanations": ["Correct. Type A blood has A antigen on RBCs and anti-B antibodies in plasma.", "Incorrect. This describes type B blood.", "Incorrect. This describes type AB blood.", "Incorrect. This describes type O blood."], "teaching": "Reinforce that compatibility testing and patient/product identification are required before transfusion.", "dont": "Do not select blood based only on a verbal report of blood type; follow crossmatch and facility verification procedures.", "further": "“Since I know I am type A, the nurse can skip the blood-bank checks.”", "source": "Chapter 27: ABO blood types"}, {"category": "Blood Types & Transfusion", "type": "single", "stem": "An Rh-negative patient asks what Rh-negative means. Which response by the nurse is best?", "options": ["The D antigen is absent from the patient’s RBCs", "The patient has no ABO antigens on the RBCs", "The patient naturally has anti-D antibodies at birth", "The patient cannot ever receive any blood product"], "correct": [0], "explanations": ["Correct. Rh st
